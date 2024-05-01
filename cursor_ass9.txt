@@ -1,0 +1,121 @@
+GROUP C-ASSIGNMENT 09
+
+Title: Write and execute PL/SQL block to implement all types of cursor.
+*************************************************************************
+
+
+........................<<create schema and display it>>.................
+
+MariaDB [(none)]> create database stock;
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [(none)]> use stock;
+Database changed
+
+MariaDB [stock]> create table goods(id int primary key,name char(20),quantity int, stock char(30));
+Query OK, 0 rows affected (0.05 sec)
+
+MariaDB [stock]> desc goods;
++----------+----------+------+-----+---------+-------+
+| Field    | Type     | Null | Key | Default | Extra |
++----------+----------+------+-----+---------+-------+
+| id       | int(11)  | NO   | PRI | NULL    |       |
+| name     | char(20) | YES  |     | NULL    |       |
+| quantity | int(11)  | YES  |     | NULL    |       |
+| stock    | char(30) | YES  |     | NULL    |       |
++----------+----------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+
+
+.............<<insert data except stock status and display all>>.........
+
+MariaDB [stock]> insert into goods(id,name,quantity) values (1,"Notebook",20),(2,"Pen",100),(3,"Pencil",50);
+Query OK, 3 rows affected (0.02 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [stock]> select * from goods;
++----+----------+----------+-------+
+| id | name     | quantity | stock |
++----+----------+----------+-------+
+|  1 | Notebook |       20 | NULL  |
+|  2 | Pen      |      100 | NULL  |
+|  3 | Pencil   |       50 | NULL  |
++----+----------+----------+-------+
+3 rows in set (0.00 sec)
+
+
+.......................<<procedure definition>>.........................
+
+MariaDB [stock]> DELIMITER //
+MariaDB [stock]> create procedure d4()
+    -> begin
+    -> DECLARE done BOOLEAN DEFAULT FALSE;
+    -> DECLARE result char(20)DEFAULT "insufficient";
+    -> DECLARE name1 char(20);
+    -> DECLARE id1,c INT default 0;
+    -> DECLARE cur1 CURSOR for
+    -> SELECT id,name,quantity FROM goods;
+    -> DECLARE CONTINUE HANDLER FOR NOT FOUND
+    -> SET done=TRUE;
+    -> open cur1;
+    -> read_loop:Loop
+    -> FETCH cur1 INTO id1,name1,c;
+    -> if done THEN
+    -> leave read_loop;
+    -> end if;
+    -> if c>50 then
+    -> set result="sufficient";
+    -> ELSE
+    -> set result="insufficient";
+    -> END IF;
+    -> update goods set stock=result
+    -> where id=id1;
+    -> select concat(name1,'has',result,'stock')as availability;
+    -> END LOOP;
+    -> CLOSE cur1;
+    -> end
+    -> //
+Query OK, 0 rows affected (0.03 sec)
+
+
+.............................<<procedure call>>.........................
+
+MariaDB [stock]> call d4();
+    -> //
++------------------------------+
+| availability                 |
++------------------------------+
+| Notebookhasinsufficientstock |
++------------------------------+
+1 row in set (0.05 sec)
+
++-----------------------+
+| availability          |
++-----------------------+
+| Penhassufficientstock |
++-----------------------+
+1 row in set (0.06 sec)
+
++----------------------------+
+| availability               |
++----------------------------+
+| Pencilhasinsufficientstock |
++----------------------------+
+1 row in set (0.07 sec)
+
+Query OK, 0 rows affected, 1 warning (0.07 sec)
+
+
+........................<<display updated table data>>.................
+
+MariaDB [stock]> select * from goods;
++----+----------+----------+--------------+
+| id | name     | quantity | stock        |
++----+----------+----------+--------------+
+|  1 | Notebook |       20 | insufficient |
+|  2 | Pen      |      100 | sufficient   |
+|  3 | Pencil   |       50 | insufficient |
++----+----------+----------+--------------+
+3 rows in set (0.00 sec)
+

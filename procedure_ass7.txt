@@ -1,0 +1,124 @@
+GROUP C-ASSIGNMENT 7
+Title:Write and execute PL/SQL stored procedure and function to perform asuitable task on the database.Demonstrate its use.
+
+
+
+
+..................<<create schemas and display it>>..................
+
+MariaDB [(none)]> create database grade;
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [(none)]> use grade;
+Database changed
+
+MariaDB [grade]> create table student(stud_id int primary key,name char(30),DBMS int,SE int,PA int,CG int,EM3 int);
+Query OK, 0 rows affected (0.08 sec)
+
+MariaDB [grade]> desc student;
++---------+----------+------+-----+---------+-------+
+| Field   | Type     | Null | Key | Default | Extra |
++---------+----------+------+-----+---------+-------+
+| stud_id | int(11)  | NO   | PRI | NULL    |       |
+| name    | char(30) | YES  |     | NULL    |       |
+| DBMS    | int(11)  | YES  |     | NULL    |       |
+| SE      | int(11)  | YES  |     | NULL    |       |
+| PA      | int(11)  | YES  |     | NULL    |       |
+| CG      | int(11)  | YES  |     | NULL    |       |
+| EM3     | int(11)  | YES  |     | NULL    |       |
++---------+----------+------+-----+---------+-------+
+7 rows in set (0.01 sec)
+
+
+
+............<<insert data except badge and display all>> ........
+
+MariaDB [grade]> insert into student values(1,"Rahul",89,75,80,85,95);
+Query OK, 1 row affected (0.03 sec)
+
+MariaDB [grade]> insert into student values(2,"Sumit",98,85,90,88,97);
+Query OK, 1 row affected (0.05 sec)
+
+MariaDB [grade]> insert into student values(3,"Prajwal",87,78,80,84,93);
+Query OK, 1 row affected (0.04 sec)
+
+MariaDB [grade]> insert into student values(4,"Dhiraj",92,79,65,73,86),(5,"Yogesh",81,83,67,77,61),(6,"Abhi",94,78,81,80,87);
+Query OK, 3 rows affected (0.05 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+MariaDB [grade]> select * from student;
++---------+---------+------+------+------+------+------+-------+
+| stud_id | name    | DBMS | SE   | PA   | CG   | EM3  | grade |
++---------+---------+------+------+------+------+------+-------+
+|       1 | Rahul   |   89 |   75 |   80 |   85 |   95 | NULL  |
+|       2 | Sumit   |   98 |   85 |   90 |   88 |   97 | NULL  |
+|       3 | Prajwal |   87 |   78 |   80 |   84 |   93 | NULL  |
+|       4 | Dhiraj  |   92 |   79 |   65 |   73 |   86 | NULL  |
+|       5 | Yogesh  |   81 |   83 |   67 |   77 |   61 | NULL  |
+|       6 | Abhi    |   94 |   78 |   81 |   80 |   87 | NULL  |
++---------+---------+------+------+------+------+------+-------+
+6 rows in set (0.00 sec)
+
+
+
+....................<<Function and procedure Definition>>...........
+
+1.Defining function :
+
+MariaDB [grade]> delimiter //
+MariaDB [grade]> CREATE FUNCTION f5(total int)
+    -> RETURNS CHAR(20)
+    -> BEGIN
+    -> DECLARE gr CHAR(30);
+    -> SET total=total/5;
+    -> CASE
+    ->
+    -> WHEN total>90 THEN SET gr="Distinction";
+    -> WHEN total>80 THEN SET gr="First Class";
+    -> WHEN total>70 THEN SET gr="Higher Second Class";
+    -> WHEN total>60 THEN SET gr="Second Class";
+    ->
+    -> ELSE
+    -> SET gr="Fail";
+    -> END CASE;
+    -> RETURN gr;
+    -> END //
+Query OK, 0 rows affected (0.06 sec)
+
+2.Defining procedure :
+
+MariaDB [grade]> delimiter //
+MariaDB [grade]> create procedure p5()
+    -> begin
+    -> update student set grade=f5(DBMS+SE+PA+CG+EM3);
+    -> end //
+Query OK, 0 rows affected (0.00 sec)
+
+
+
+........................<<Call procedure>>.......................
+
+
+
+MariaDB [grade]> delimiter ;
+MariaDB [grade]> call p5;
+Query OK, 6 rows affected (0.02 sec)
+
+
+
+..................<<display data with updated badge>>.............
+
+
+MariaDB [grade]> select * from student;
++----------+----------+--------+------+------+------+-------+----------------------------+
+| stud_id | name   | DBMS | SE   | PA    | CG   | EM3 |  grade              	 |
++----------+----------+--------+------+------+------+-------+----------------------------+
+|       1    | Rahul   |   89     |  75  |   80 |   85 |   95  | First Class       	 |
+|       2    | Sumit   |   98     |  85  |   90 |   88 |   97  | Distinction      	 |
+|       3    | Prajwal |   87     |  78  |   80 |   84 |   93  | First Class        	 |
+|       4    | Dhiraj   |   92     |  79  |   65 |   73 |   86  | Higher Second Class |
+|       5    | Yogesh  |   81    |   83  |   67 |   77 |   61  | Higher Second Class |
+|       6    | Abhi      |   94    |   78  |   81 |   80 |   87  | First Class         	 |
++----------+----------+---------+------+------+------+------+-----------------------------+
+6 rows in set (0.00 sec)
+

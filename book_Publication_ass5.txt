@@ -1,0 +1,316 @@
+GROUP B-ASSIGNMENT: 05
+
+TITLE: Implement DML commands with following operations:
+a. Implement queries with relational operators, boolean operators and pattern matching,arithmetic operations and built in functions.
+b. Execute the aggregate functions like count, sum, avg etc.
+c. Retrieve the data from the database based on time and date functions like now (), date (),day (), time () etc.
+d. Implement nested sub queries.
+e. Implement queries with set operators.
+
+********************Insert data in tables**************************
+
+MariaDB [library]> insert into publications values(786,"Technical Publications","Pune"),(444,"Westland Publications","Madras"),(125,"Prakash Publications","Satara"),(547,"Target","Mumbai");
+Query OK, 4 rows affected (0.05 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+MariaDB [library]> insert into book values(101,"Atomic Habits","J.K.Rowling",599,444);
+Query OK, 1 row affected (0.05 sec)
+
+MariaDB [library]> insert into book values(99,"Bhagwad Gita","S.Radhakrishnan",999,786),(54,"Harry Potter","J.K.Rowling",599,547),(12,"Kite Runner","A.P.J.Abdul Kalam",699,125);
+Query OK, 3 rows affected (0.04 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+******************Display data*****************************
+
+MariaDB [library]> select * from publications;
++------+--------------------------------+---------------+
+| p_id | p_name                           | p_location |
++------+--------------------------------+---------------+
+|  125 | Prakash Publications     | Satara       |
+|  444 | Westland Publications  | Madras     |
+|  547 | Target                               | Mumbai   |
+|  786 | Technical Publications   | Pune         |
++-------+---------------------------------+--------------+
+4 rows in set (0.00 sec)
+
+MariaDB [library]> select * from book;
++------+---------------+-------------------+-------+------+
+| b_id | title         | author            | price | p_id |
++------+---------------+-------------------+-------+------+
+|   12 | Kite Runner   | A.P.J.Abdul Kalam |   699 |  125 |
+|   54 | Harry Potter  | J.K.Rowling       |   599 |  547 |
+|   99 | Bhagwad Gita  | S.Radhakrishnan   |   999 |  786 |
+|  101 | Atomic Habits | J.K.Rowling       |   599 |  444 |
++------+---------------+-------------------+-------+------+
+4 rows in set (0.00 sec)
+
+
+**********************Update data***************************
+
+MariaDB [library]> UPDATE book SET vol=5 where b_id=54;
+Query OK, 1 row affected (0.05 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [library]> select * from book;
++------+---------------+-------------------+-------+------+------+
+| b_id | title         | author            | price | p_id | vol  |
++------+---------------+-------------------+-------+------+------+
+|   12 | Kite Runner   | A.P.J.Abdul Kalam |   699 |  125 | NULL |
+|   54 | Harry Potter  | J.K.Rowling       |   599 |  547 |    5 |
+|   99 | Bhagwad Gita  | S.Radhakrishnan   |   999 |  786 | NULL |
+|  101 | Atomic Habits | J.K.Rowling       |   599 |  444 | NULL |
++------+---------------+-------------------+-------+------+------+
+4 rows in set (0.00 sec)
+
+MariaDB [library]> UPDATE book SET vol=3 where b_id=99;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+MariaDB [library]> select * from book;
++------+---------------+-------------------+-------+------+------+
+| b_id | title         | author            | price | p_id | vol  |
++------+---------------+-------------------+-------+------+------+
+|   12 | Kite Runner   | A.P.J.Abdul Kalam |   699 |  125 | NULL |
+|   54 | Harry Potter  | J.K.Rowling       |   599 |  547 |    5 |
+|   99 | Bhagwad Gita  | S.Radhakrishnan   |   999 |  786 |    3 |
+|  101 | Atomic Habits | J.K.Rowling       |   599 |  444 | NULL |
++------+---------------+-------------------+-------+------+------+
+4 rows in set (0.00 sec)
+
+
+*******************Delete record*********************************
+
+MariaDB [library]> DELETE from book where b_id=101;
+Query OK, 1 row affected (0.05 sec)
+
+MariaDB [library]> select * from book;
++------+-------------------+---------------------------+--------+-------+--------+
+| b_id | title                |   author                      | price | p_id | vol     |
++------+-------------------+---------------------------+--------+--------+--------+
+|   12 | Kite Runner     | A.P.J.Abdul Kalam    |   699 |  125 | NULL |
+|   54 | Harry Potter    | J.K.Rowling                |   599 |  547 |    5     |
+|   99 | Bhagwad Gita | S.Radhakrishnan       |   999 |  786 |    3     |
++-------+-------------------+----------------------------+--------+-------+---------+
+3 rows in set (0.00 sec)
+
+********************Where clause**************************
+MariaDB [library]> select * from publications where p_id=125;
++------+----------------------+------------+
+| p_id | p_name               | p_location |
++------+----------------------+------------+
+|  125 | Prakash Publications | Satara     |
++------+----------------------+------------+
+1 row in set (0.00 sec)
+
+MariaDB [library]> select * from book where b_id=99;
++------+--------------+-----------------+-------+------+------+
+| b_id | title        | author          | price | p_id | vol  |
++------+--------------+-----------------+-------+------+------+
+|   99 | Bhagwad Gita | S.Radhakrishnan |   999 |  786 |    3 |
++------+--------------+-----------------+-------+------+------+
+1 row in set (0.00 sec)
+
+*********************Sort records******************
+MariaDB [library]> select * from book ORDER BY b_id desc;
++------+--------------+-------------------+-------+------+------+
+| b_id | title        | author            | price | p_id | vol  |
++------+--------------+-------------------+-------+------+------+
+|   99 | Bhagwad Gita | S.Radhakrishnan   |   999 |  786 |    3 |
+|   54 | Harry Potter | J.K.Rowling       |   599 |  547 |    5 |
+|   12 | Kite Runner  | A.P.J.Abdul Kalam |   699 |  125 | NULL |
++------+--------------+-------------------+-------+------+------+
+3 rows in set (0.00 sec)
+
+MariaDB [library]> select * from book ORDER BY b_id asc;
++------+--------------+-------------------+-------+------+------+
+| b_id | title        | author            | price | p_id | vol  |
++------+--------------+-------------------+-------+------+------+
+|   12 | Kite Runner  | A.P.J.Abdul Kalam |   699 |  125 | NULL |
+|   54 | Harry Potter | J.K.Rowling       |   599 |  547 |    5 |
+|   99 | Bhagwad Gita | S.Radhakrishnan   |   999 |  786 |    3 |
++------+--------------+-------------------+-------+------+------+
+3 rows in set (0.00 sec)
+
+
+*****************Aggregate functions********************
+
+MariaDB [library]> select MAX(price) from book;
++------------+
+| MAX(price) |
++------------+
+|        999 |
++------------+
+1 row in set (0.00 sec)
+
+MariaDB [library]> select MIN(price) from book;
++------------+
+| MIN(price) |
++------------+
+|        599 |
++------------+
+1 row in set (0.00 sec)
+
+MariaDB [library]> select SUM(price) from book;
++------------+
+| SUM(price) |
++------------+
+|       2297 |
++------------+
+1 row in set (0.00 sec)
+
+MariaDB [library]> select AVG(price) from book;
++------------+
+| AVG(price) |
++------------+
+|   765.6667 |
++------------+
+1 row in set (0.00 sec)
+MariaDB [library]> select COUNT(title) from book;
++--------------+
+| COUNT(title) |
++--------------+
+|            3 |
++--------------+
+1 row in set (0.00 sec)
+
+
+********************Group by clause**************************
+
+MariaDB [library]> select title,MAX(price) AS "Maximum Price" from book GROUP BY title;
++--------------+---------------+
+| title        | Maximum Price |
++--------------+---------------+
+| Bhagwad Gita |           999 |
+| Harry Potter |           599 |
+| Kite Runner  |           699 |
++--------------+---------------+
+3 rows in set (0.00 sec)
+
+
+**********************Like Operator**********************
+
+MariaDB [library]> select title,author from book WHERE author LIKE 'S%';
++--------------+-----------------+
+| title        | author          |
++--------------+-----------------+
+| Bhagwad Gita | S.Radhakrishnan |
++--------------+-----------------+
+1 row in set (0.00 sec)
+
+******************Lower case & Upper case*********************
+
+MariaDB [library]> SELECT LOWER(title) from book;
++--------------+
+| LOWER(title) |
++--------------+
+| kite runner  |
+| harry potter |
+| bhagwad gita |
++--------------+
+3 rows in set (0.00 sec)
+
+MariaDB [library]> SELECT UPPER(title) from book;
++--------------+
+| UPPER(title) |
++--------------+
+| KITE RUNNER  |
+| HARRY POTTER |
+| BHAGWAD GITA |
++--------------+
+3 rows in set (0.00 sec)
+
+
+**********************Between clause*********************
+
+MariaDB [library]> select * from book where price BETWEEN 600 AND 1000;
++------+--------------+-------------------+-------+------+------+
+| b_id | title        | author            | price | p_id | vol  |
++------+--------------+-------------------+-------+------+------+
+|   12 | Kite Runner  | A.P.J.Abdul Kalam |   699 |  125 | NULL |
+|   99 | Bhagwad Gita | S.Radhakrishnan   |   999 |  786 |    3 |
++------+--------------+-------------------+-------+------+------+
+2 rows in set (0.00 sec)
+
+MariaDB [library]> select * from book where price NOT BETWEEN 600 AND 1000;
++------+--------------+-------------+-------+------+------+
+| b_id | title        | author      | price | p_id | vol  |
++------+--------------+-------------+-------+------+------+
+|   54 | Harry Potter | J.K.Rowling |   599 |  547 |    5 |
++------+--------------+-------------+-------+------+------+
+1 row in set (0.00 sec)
+
+****************Use of “AND, OR, NOT”***************************
+
+MariaDB [library]> SELECT * FROM book where price=999 AND b_id=99;
++------+--------------+-----------------+-------+------+------+
+| b_id | title        | author          | price | p_id | vol  |
++------+--------------+-----------------+-------+------+------+
+|   99 | Bhagwad Gita | S.Radhakrishnan |   999 |  786 |    3 |
++------+--------------+-----------------+-------+------+------+
+1 row in set (0.00 sec)
+
+MariaDB [library]> SELECT * FROM book where price=599 OR b_id=12;
++------+--------------+-------------------+-------+------+------+
+| b_id | title        | author            | price | p_id | vol  |
++------+--------------+-------------------+-------+------+------+
+|   12 | Kite Runner  | A.P.J.Abdul Kalam |   699 |  125 | NULL |
+|   54 | Harry Potter | J.K.Rowling       |   599 |  547 |    5 |
++------+--------------+-------------------+-------+------+------+
+2 rows in set (0.00 sec)
+
+MariaDB [library]> SELECT * FROM book where NOT b_id=12;
++------+--------------+-----------------+-------+------+------+
+| b_id | title        | author          | price | p_id | vol  |
++------+--------------+-----------------+-------+------+------+
+|   54 | Harry Potter | J.K.Rowling     |   599 |  547 |    5 |
+|   99 | Bhagwad Gita | S.Radhakrishnan |   999 |  786 |    3 |
++------+--------------+-----------------+-------+------+------+
+2 rows in set (0.00 sec)
+
+************************Nested Query***************************
+Statement :- Book(name) published by publication house in Satara is to be known
+
+MariaDB [library]> SELECT title from book WHERE p_id IN(select p_id from publications where p_location='Satara');
++-------------+
+| title       |
++-------------+
+| Kite Runner |
++-------------+
+1 row in set (0.00 sec)
+
+
+****************Other queries***************************
+Query :- Inner Join
+	   here 2 tables as publications and book are created
+
+MariaDB [library]> select * from publications;
++------+------------------------+------------+
+| p_id | p_name                 | p_location |
++------+------------------------+------------+
+|  125 | Prakash Publications   | Satara     |
+|  444 | Westland Publications  | Madras     |
+|  547 | Target                 | Mumbai     |
+|  786 | Technical Publications | Pune       |
++------+------------------------+------------+
+4 rows in set (0.00 sec)
+
+MariaDB [library]> select * from books;
++-----+--------------+---------------------+
+| bid | b_name       | b_author            |
++-----+--------------+---------------------+
+| 125 | Bhagwad Gita | S.Radhakrishnan     |
+| 444 | Idols        | Sunil Gavaskar      |
+| 547 | Chitra       | Ravindranath Tagore |
+| 786 | Harry Potter | J.K.Rowling         |
++-----+--------------+---------------------+
+4 rows in set (0.00 sec)
+MariaDB [library]> select   publications.p_name,publications.p_location,books.b_name from publications INNER JOIN books ON publications.p_id=books.bid;
++------------------------+------------+--------------+
+| p_name                 | p_location | b_name       |
++------------------------+------------+--------------+
+| Prakash Publications   | Satara     | Bhagwad Gita |
+| Westland Publications  | Madras     | Idols        |
+| Target                 | Mumbai     | Chitra       |
+| Technical Publications | Pune       | Harry Potter |
++------------------------+------------+--------------+
+4 rows in set (0.00 sec)
